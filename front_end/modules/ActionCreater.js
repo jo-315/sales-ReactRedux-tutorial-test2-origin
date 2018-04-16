@@ -34,6 +34,7 @@ export function onSetUser(user){
             .then((res) => {
               dispatch(receivePost(res.body))
               localStorage.setItem('count_user', JSON.stringify(res.body))
+              localStorage.setItem('isAuthenticated', 'true')
               window.location = '/count'
             })
             .catch((err) => {

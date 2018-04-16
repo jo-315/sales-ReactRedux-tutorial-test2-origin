@@ -11,7 +11,10 @@ import {
   onChangeButton
 } from '../modules/ActionCreater'
 
-import AuthContent from './AuthContent'
+import Header from './counter/Header'
+import Countbox from './counter/counterbox/CountBox'
+import Historybox from './counter/History'
+
 import Signin from './Signin'
 import Style from './App.css'
 
@@ -23,31 +26,44 @@ class Auth extends Component {
           name: '',
           email: '',
           password: ''
-        },
-      isAuthenticated: false
+        }
     }
   }
   componentWillMount(){
     const user = JSON.parse(localStorage.getItem('count_user'))
-    user
-    ? this.setState({
-      user: user,
-      isAuthenticated: true
-    })
-    : null
+    this.setState({ user })
+    if (!localStorage.getItem('isAuthenticated')) {
+    this.props.history.push("/signin")
+    }
+  }
+
+  handleLoout(){
+    this.setState({
+      user: {
+          name: '',
+          email: '',
+          password: ''
+        },
+        isAuthenticated: false
+      })
+    localStorage.clear()
+    window.location = '/signin'
   }
 
   render(){
     const props = Object.assign(
       {},
       {...this.props},
-      {...this.state}
+      {...this.state},
+      {handleLoout: this.handleLoout.bind(this)},
     )
     return (
       <div>
         <Switch>
-          <Route path="/signin" render={() => (<Signin {...this.props}/>)} />
-          <AuthContent {...props} isAuthenticated={this.state.isAuthenticated}/>
+          <Route exact path="/" render={() => (<Countbox {...props}/>)} />
+          <Route exact path="/signin" render={() => (<Signin {...this.props}/>)} />
+          <Route exact path="/count" render={() => (<Countbox {...props}/>)} />
+          <Route path="/history" render={() => (<Historybox {...props}/>)} />
         </Switch>
        </div>
     )
